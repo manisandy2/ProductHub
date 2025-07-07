@@ -1,0 +1,15 @@
+FROM python:3-alpine3.20
+
+WORKDIR /app
+
+COPY ".env" /app/
+COPY ".env.header" /app/
+COPY ".env.token" /app/
+COPY "authtoken_01.py" /app/
+COPY "api_to_excel_03.py" /app/
+COPY "requirement.txt" /app/
+
+
+RUN pip install -r requirement.txt
+
+CMD [ "python","api_to_excel_03.py" ]

@@ -1,0 +1,1032 @@
+{
+	"info": {
+		"_postman_id": "5fc81fba-025a-45b6-ac36-a684a4cd7e1d",
+		"name": "Paylater_CatalogservService - 3rdParty",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29034540",
+		"_collection_link": "https://warped-meadow-886849.postman.co/workspace/New-Team-Workspace~05f512d1-899a-4d0e-8af2-112ef23e062c/collection/29034540-5fc81fba-025a-45b6-ac36-a684a4cd7e1d?action=share&source=collection_link&creator=29034540"
+	},
+	"item": [
+		{
+			"name": "CloudTransaction",
+			"item": [
+				{
+					"name": "CreatePayment",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"var body = JSON.parse(request.data)\r",
+									"var product_details = body.product_details[0];\r",
+									"var amountObj = product_details.amount;\r",
+									"var txnamount = amountObj.amount;\r",
+									"{\r",
+									"    pm.environment.set(\"posId\", body.client.id);\r",
+									"    pm.environment.set(\"amount\", txnamount);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.environment.set(\"transactionId\", response.transaction_reference_id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access-token}}",
+								"type": "default"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "default"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"product_details\": [\r\n        {\r\n            \"product_code\": \"111688\",\r\n            \"oem_id\": \"\",\r\n            \"amount\": {\r\n                \"currency_code\": \"INR\",\r\n                \"amount\": \"20000\"\r\n            },\r\n            \"product_schemes\": [\r\n                {\r\n                    \"scheme_id\": \"5679\",\r\n                    \"rule_id\": \"4286\",\r\n                    \"rule_type_id\": \"108\"\r\n                }\r\n            ],\r\n            \"product_serial_number\": \"\"\r\n        }\r\n    ],\r\n    \"issuer_offer\": {\r\n        \"tenure_id\": \"9\",\r\n        \"issuer_id\": \"3\",\r\n        \"issuer_type\":\"CC_DC\",\r\n        \"issuer_schemes\": [\r\n            {\r\n                \"scheme_id\": \"5679\",\r\n                \"rule_id\": \"4286\",\r\n                \"rule_type_id\": \"106\"\r\n            }\r\n        ]\r\n    },\r\n    \"client\": {\r\n        \"id\": \"138492\",\r\n        \"type\": \"POS_TAB\"\r\n    },\r\n    \"payment_mode\": \"BANK_EMI\",\r\n    \"purchase_details\": {\r\n        \"bill_sequence_number\": \"123\",\r\n        \"invoice_number\": \"456\"\r\n    },\r\n    \"customer_details\": {\r\n        \"name\": \"ankit\",\r\n        \"email\": \"sample@pinelabs.com\",\r\n        \"phone\": {\r\n            \"country_code\": \"091\",\r\n            \"national_number\": \"9999999999\",\r\n            \"extension_number\": \"\",\r\n            \"phone_type\": \"MOBILE\"\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/v1/catalogue/create-payment",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"catalogue",
+								"create-payment"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cancel Transaction Api",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "x-emicatalogue-usrnm",
+								"value": "fenil.shah"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\t \r\n\t \"posId\": {{posId}},\r\n\t \"amount\": \"{{amount}}\",\r\n     \"transactionId\": \"{{transactionId}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://192.168.101.219/emicatalogue/rest/data/transaction/cancelTransaction",
+							"protocol": "https",
+							"host": [
+								"192",
+								"168",
+								"101",
+								"219"
+							],
+							"path": [
+								"emicatalogue",
+								"rest",
+								"data",
+								"transaction",
+								"cancelTransaction"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "GenerateAccessToken",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.environment.set(\"access-token\",responseJson.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "grant_type",
+							"value": "CLIENT_CREDENTIALS",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "{{client-id}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client-secret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{url}}/v1/identity/oauth/token",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"identity",
+						"oauth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Brands",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/brands",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"brands"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "images,product_category_ids",
+							"disabled": true
+						},
+						{
+							"key": "product_category_id_in",
+							"value": "1,2",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"POS_LANDI\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"POS_TAB\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"STORE\"}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Issuers",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/issuers",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"issuers"
+					],
+					"query": [
+						{
+							"key": "issuer_type",
+							"value": "CC_DC",
+							"disabled": true
+						},
+						{
+							"key": "fields",
+							"value": "images",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"POS_LANDI\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"POS_TAB\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"STORE\"}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Tenures",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/tenures",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"tenures"
+					],
+					"query": [
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ProductCategoryGroups",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/product-category-groups",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"product-category-groups"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "images",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"POS_LANDI\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"POS_TAB\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"STORE\"}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ProductCategories",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/product-categories",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"product-categories"
+					],
+					"query": [
+						{
+							"key": "fields",
+							"value": "images",
+							"disabled": true
+						},
+						{
+							"key": "product_category_group_id_in",
+							"value": "5",
+							"disabled": true
+						},
+						{
+							"key": "brand_id_in",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"POS_LANDI\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"POS_TAB\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"STORE\"}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Stores",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/stores",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"stores"
+					],
+					"query": [
+						{
+							"key": "brand_id_in",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "product_category_id_in",
+							"value": "3,4",
+							"disabled": true
+						},
+						{
+							"key": "map_location",
+							"value": "%7B%22box_x_id%22%20%3A%2030468%2C%20%22box_y_id%22%20%3A%2039382%2C%20%22zoom_level%22%20%3A%20%22ZOOM_11%22%7D",
+							"disabled": true
+						},
+						{
+							"key": "client_type",
+							"value": "POS_TAB",
+							"disabled": true
+						},
+						{
+							"key": "fields",
+							"value": "map_location,address",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Products",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/products",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"products"
+					],
+					"query": [
+						{
+							"key": "brand_id_in",
+							"value": "1,2",
+							"disabled": true
+						},
+						{
+							"key": "product_category_id_in",
+							"value": "3",
+							"disabled": true
+						},
+						{
+							"key": "min_indicative_price",
+							"value": "%7B%22currency_code%22%20%3A%20%22INR%22%2C%20%22amount%22%20%3A%209000%7D",
+							"disabled": true
+						},
+						{
+							"key": "max_indicative_price",
+							"value": "%7B%22currency_code%22%20%3A%20%22INR%22%2C%20%22amount%22%20%3A%2013000%7D",
+							"disabled": true
+						},
+						{
+							"key": "sku_code",
+							"value": "s-12",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "apple",
+							"disabled": true
+						},
+						{
+							"key": "page",
+							"value": "1",
+							"disabled": true
+						},
+						{
+							"key": "page_size",
+							"value": "2",
+							"disabled": true
+						},
+						{
+							"key": "total_required",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"POS_LANDI\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%22138492%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+							"description": "{\"id\": \"1\", \"type\": \"POS_TAB\"}",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+							"description": "{\"id\": \"2\", \"type\": \"STORE\"}",
+							"disabled": true
+						},
+						{
+							"key": "sort_by",
+							"value": "indicative_price",
+							"disabled": true
+						},
+						{
+							"key": "sort_order",
+							"value": "asc",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Products",
+					"originalRequest": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access-token}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{url}}/v1/catalogue/products?page_size=100&client=%7B%22id%22%3A%20%221830966%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"v1",
+								"catalogue",
+								"products"
+							],
+							"query": [
+								{
+									"key": "brand_id_in",
+									"value": "1,2",
+									"disabled": true
+								},
+								{
+									"key": "product_category_id_in",
+									"value": "3",
+									"disabled": true
+								},
+								{
+									"key": "min_indicative_price",
+									"value": "%7B%22currency_code%22%20%3A%20%22INR%22%2C%20%22amount%22%20%3A%209000%7D",
+									"disabled": true
+								},
+								{
+									"key": "max_indicative_price",
+									"value": "%7B%22currency_code%22%20%3A%20%22INR%22%2C%20%22amount%22%20%3A%2013000%7D",
+									"disabled": true
+								},
+								{
+									"key": "sku_code",
+									"value": "MQAF3HN/A",
+									"disabled": true
+								},
+								{
+									"key": "search",
+									"value": "apple",
+									"disabled": true
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "page_size",
+									"value": "100"
+								},
+								{
+									"key": "total_required",
+									"value": "true",
+									"disabled": true
+								},
+								{
+									"key": "client",
+									"value": "%7B%22id%22%3A%20%221830966%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+									"description": "{\"id\": \"1830966\", \"type\": \"POS_LANDI\"}"
+								},
+								{
+									"key": "client",
+									"value": "%7B%22id%22%3A%20%22138492%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+									"description": "{\"id\": \"1\", \"type\": \"POS_TAB\"}",
+									"disabled": true
+								},
+								{
+									"key": "client",
+									"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+									"description": "{\"id\": \"2\", \"type\": \"STORE\"}",
+									"disabled": true
+								},
+								{
+									"key": "sort_by",
+									"value": "indicative_price",
+									"disabled": true
+								},
+								{
+									"key": "sort_order",
+									"value": "asc",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"status": "OK",
+					"code": 200,
+					"_postman_previewlanguage": "json",
+					"header": [
+						{
+							"key": "Date",
+							"value": "Fri, 08 Sep 2023 10:25:07 GMT"
+						},
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						},
+						{
+							"key": "Connection",
+							"value": "keep-alive"
+						},
+						{
+							"key": "correlation-id",
+							"value": "80EB9AF13CAEBA9148AD6D005F337216"
+						},
+						{
+							"key": "Transfer-Encoding",
+							"value": "chunked"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"items\": [\n        {\n            \"id\": \"54162\",\n            \"name\": \"ACER Aspire 3 Ci3 Laptop(UN.ADDSI.079)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.ADDSI.079\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3289900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4699900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4699900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202211229eff2df4-f461-48cf-9727-fba26fb904ea\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20221122394e5c5f-5dd9-49e1-b205-03f7fe1993c5\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202211227913ece2-5247-4103-9143-77e7c2aea9f3\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20221122cd28cdac-5d74-4d05-8ca8-4e0f167ef659\"\n                }\n            ]\n        },\n        {\n            \"id\": \"64264\",\n            \"name\": \"ACER Aspire 3 R5 7520U Laptop(NX.KDESI.00A)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KDESI.00A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2869900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4099900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4099900\n            }\n        },\n        {\n            \"id\": \"64265\",\n            \"name\": \"ACER Aspire 3 i3-N305 Laptop(NX.KDHSI.005)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KDHSI.005\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2519900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3599900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3599900\n            }\n        },\n        {\n            \"id\": \"64266\",\n            \"name\": \"ACER Aspire 3 i3-N305 Laptop(NX.KDHSI.006)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KDHSI.006\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2239900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3199900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3199900\n            }\n        },\n        {\n            \"id\": \"54161\",\n            \"name\": \"ACER Aspire 5 Ci5-1135G7 Laptop(UN.A1ESI.030)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.A1ESI.030\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3429900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4899900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4899900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20221122eaf921f8-a115-4458-bd51-dd59b727098f\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022112209a89353-65c7-4d1e-a5ff-77b4bf06dfa0\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022112232c9a886-c83f-4ee2-be4c-f930aed09a50\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022112265a90998-98e4-4da0-b44f-82c4a79a75e7\"\n                }\n            ]\n        },\n        {\n            \"id\": \"64233\",\n            \"name\": \"ACER Aspire 5 i3-1215U Laptop(NX.K3KSI.003)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.K3KSI.003\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2589900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3699900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3699900\n            }\n        },\n        {\n            \"id\": \"64243\",\n            \"name\": \"ACER Aspire 5 i3-1215U Laptop(UN.K3JSI.007)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.K3JSI.007\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2589900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3699900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3699900\n            }\n        },\n        {\n            \"id\": \"64237\",\n            \"name\": \"ACER Aspire 5 i3-1305U Laptop(NX.KHFSI.003)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KHFSI.003\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3009900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4299900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4299900\n            }\n        },\n        {\n            \"id\": \"64238\",\n            \"name\": \"ACER Aspire 5 i3-1305U Laptop(NX.KHFSI.004)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KHFSI.004\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2939900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4199900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4199900\n            }\n        },\n        {\n            \"id\": \"64239\",\n            \"name\": \"ACER Aspire 5 i3-1305U Laptop(NX.KHJSI.003)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KHJSI.003\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2869900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4099900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4099900\n            }\n        },\n        {\n            \"id\": \"64240\",\n            \"name\": \"ACER Aspire 5 i3-1305U Laptop(NX.KHJSI.004)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KHJSI.004\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2799900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3999900\n            }\n        },\n        {\n            \"id\": \"64242\",\n            \"name\": \"ACER Aspire 5 i5-1135G7 Laptop(UN.AT2SI.003)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.AT2SI.003\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3254900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4649900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4649900\n            }\n        },\n        {\n            \"id\": \"64241\",\n            \"name\": \"ACER Aspire Vero i3-1315U Laptop(NX.KJTSI.002)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KJTSI.002\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4999900\n            }\n        },\n        {\n            \"id\": \"38395\",\n            \"name\": \"ACER CI5 (Intel) Laptop(NX.A1ESI.006)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.A1ESI.006\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3219900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4599900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4599900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2021071032b94414-348d-43b9-8e2c-84efd48f4e45\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20210710e5f24ae3-9d6e-4010-aa46-dfa8b0f6c6b7\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20210710a6ee78d9-7dd6-4a7e-80d8-1ce46e33f596\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20210710d82044b6-c68b-4cc3-8a97-f41929f9dfaf\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46904\",\n            \"name\": \"ACER Ci3-1115G4 Laptop(NX.ADDSI.010)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.ADDSI.010\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2449900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202206154f460fc7-b8a2-4728-b657-48e4755b1ae1\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022061520b77432-1095-471a-9489-d94f3b489076\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615099b5f1a-a866-4325-b2a2-cf0c174097d7\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615bb9cb85a-4b07-4f2b-b1e1-f42acc0c1229\"\n                }\n            ]\n        },\n        {\n            \"id\": \"47774\",\n            \"name\": \"ACER Ci3-1115G4 Laptop(UN.ADDSI.053)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.ADDSI.053\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2449900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220714cf35ba19-7526-4716-932b-70bdba71ce47\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202207147fb53f51-de2c-499e-8d1c-7fb9162ee692\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220714c53cfcda-83c2-4dc8-a5ac-2986bd96d98e\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220714a1a8e150-a888-4436-b55d-540743c553f0\"\n                }\n            ]\n        },\n        {\n            \"id\": \"47773\",\n            \"name\": \"ACER Ci3-1215U Laptop(NX.K2VSI.002)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.K2VSI.002\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2589900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3699900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3699900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220714085941ca-56f4-4e55-9565-191feff6f081\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071484c31538-1207-4faf-850b-ecb954bdc18c\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071421a6dde7-47ae-4fb8-8659-21b691ab5b9d\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202207146512ae9b-90fa-4bc7-aaa5-7820b8ad3082\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46908\",\n            \"name\": \"ACER Ci3-1215U Laptop(NX.K6SSI.002)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.K6SSI.002\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 2659900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3799900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3799900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615545ec008-5aed-4338-ba85-0c0cc661053e\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615eddc109c-a962-4dce-8b10-975edd2656a2\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022061544dd5df4-c26d-4e71-bf51-34f57a8f3c55\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202206153297e2e1-aaf0-49b5-b8bd-ae1bcec2f899\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46569\",\n            \"name\": \"ACER Ci5-11320H Laptop(NX.AYKSI.001)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.AYKSI.001\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4000000\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 9499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 9499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022050929664173-0890-4aae-b416-27fb2d53b37f\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202205090bfb9d35-e1de-4afa-ae94-bc3a18f5fda1\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022050985483d90-1f96-47e7-abe7-0d75e9d1ef37\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022050938d95588-4f83-467c-b1a3-2ffd2b23adc1\"\n                }\n            ]\n        },\n        {\n            \"id\": \"42470\",\n            \"name\": \"ACER Ci5-1135G7 Aspire 5 Laptop(NX.A28SI.005)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.A28SI.005\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4999900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220124d6d93882-0f6d-49f2-82c6-afcaa42df18b\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202201241aebcfc2-efa4-40bc-afa8-c4235b017e72\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220124fb92c107-10a9-4e92-a02e-3af254ef1076\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202201242287d30f-0573-44f9-a8fc-a98de59170b0\"\n                }\n            ]\n        },\n        {\n            \"id\": \"47771\",\n            \"name\": \"ACER Ci5-1135G7 Laptop(NX.ADDSI.00Z)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.ADDSI.00Z\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3709900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5299900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5299900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220714535d8268-97ce-48bc-9b57-91718e0ca574\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220714437281ff-e4da-46fe-9b9f-9d867d009717\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071460afbcf7-b636-4936-92ab-c199aea3a81a\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202207147eccb5bd-4b26-4866-8525-6afb3d5f3c87\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46570\",\n            \"name\": \"ACER Ci5-1135G7 Laptop(UN.A23SI.055)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.A23SI.055\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3499900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4999900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022050933ef2dfa-a891-4cf7-8d58-2de8e673beee\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220509a21e7c70-c269-4e6d-a49c-f98f5c4868d4\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202205096b1cf08d-1acb-4475-82aa-c4c1ebe4e816\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220509493459bc-d015-41e6-9215-0ab45f421c1b\"\n                }\n            ]\n        },\n        {\n            \"id\": \"47775\",\n            \"name\": \"ACER Ci5-1135G7 Laptop(UN.ADDSI.055)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.ADDSI.055\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3429900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4899900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4899900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071427a3a840-e69a-477a-896e-88c324e6c6c3\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202207141b39789b-bb99-4f12-b95f-4aa9013fbb25\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071414ec7ab7-08f7-4ace-aa75-795c89d5a418\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071436b90405-b579-4866-9775-d82606ebd009\"\n                }\n            ]\n        },\n        {\n            \"id\": \"42471\",\n            \"name\": \"ACER Ci5-1135G7 Swift 5 Laptop(NX.A6SSI.005)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.A6SSI.005\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5249900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 7499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 7499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202201244a9ca8e4-4a7f-407f-b112-6e02ff95aaee\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202201248937c333-ee01-4d6f-8042-ba9e0ac8198d\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220124871271be-1ae2-43b2-a4ac-cda3bce90d64\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022012493a65828-986a-4820-8329-e914c5596e36\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46078\",\n            \"name\": \"ACER Ci5-1155G7(NX.AYCSI.003)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.AYCSI.003\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 3849900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202204226a2f5c53-f726-4cc5-bc1a-75537d6eeaf7\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220422e0f66282-f30a-414c-bd2f-153758952b78\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202204223028f783-2f98-440d-8e05-e20600950311\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220422c0d729d9-6a63-4fcd-98e1-8aa96888bbc3\"\n                }\n            ]\n        },\n        {\n            \"id\": \"47499\",\n            \"name\": \"ACER Ci5-1240P Laptop(NX.K0FSI.002)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.K0FSI.002\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4199900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5999900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071148403f75-2f64-4285-a512-acdbac581537\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022071107a427b3-640c-4513-b69a-5eafeeb0aade\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220711431f92a2-fc11-49c9-b4f7-1eb65b6e1fd8\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220711e509e9dc-db56-45df-b685-ab62f41be040\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46909\",\n            \"name\": \"ACER Ci5-1240P Laptop(NX.K9TSI.001)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.K9TSI.001\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4000000\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615551e08ce-ae8c-4313-916f-af4710b665bb\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202206159526ab95-294a-434a-8601-8e027dde8494\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022061577575224-299c-4116-9d1f-7142d4918aee\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615098d544f-f46d-43cf-af5b-934f32e73f7a\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46910\",\n            \"name\": \"ACER Ci5-12500H Laptop(UN.QFHSI.004)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.QFHSI.004\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5389900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 7699900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 7699900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615d0697e7c-286b-4461-97c8-eaad6a04f7cd\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202206151f3288f0-5506-4f89-b2f9-404b22ac17b5\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615dd720261-7f54-4817-9c31-3c0bf75a293e\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615e106fc9d-d051-4ab7-8f75-77b3a2c02ce6\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46905\",\n            \"name\": \"ACER Ci7-11390H Laptop(NX.AYLSI.001)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.AYLSI.001\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4000000\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 11499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 11499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615f046330c-75ef-4bc3-8f32-82e8e28935b9\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615b2310516-f89f-40a4-8ad2-2a618328ee26\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615ce64f9b7-cfef-48c1-9199-70a7eb0553c7\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202206150b3b690a-5eae-43c5-aa8a-f0f3404e6ed6\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46907\",\n            \"name\": \"ACER Ci7-1260P Laptop(NX.K08SI.001)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.K08SI.001\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 9099900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 12999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 12999900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202206150c1e9ae7-1206-4b38-a684-37e847f0dadf\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022061562f1f148-a11f-4cb3-b6f1-483b9c288722\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022061597597d62-4ebb-4c9a-8719-35e1e801193a\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220615bb132eb7-dd0d-45c3-b51f-f7d72eb992fd\"\n                }\n            ]\n        },\n        {\n            \"id\": \"46075\",\n            \"name\": \"ACER Ci9-11900H(NH.QC2SI.00B)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NH.QC2SI.00B\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4000000\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 12499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 12499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20220422060d6c70-0b62-43e1-96a1-e40d5a0c495b\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202204224387183a-a01f-49f1-aa72-3a5aed24da63\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202204228c2eb14a-5689-4b83-934c-e4b7ee1646cf\"\n                },\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202204220d25c8c3-a823-4d79-836d-3ba79701f10c\"\n                }\n            ]\n        },\n        {\n            \"id\": \"64247\",\n            \"name\": \"ACER Nitro 5 R5 6600H Laptop(UN.QH2SI.003)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"UN.QH2SI.003\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 6089900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 8699900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 8699900\n            }\n        },\n        {\n            \"id\": \"54160\",\n            \"name\": \"ACER Swift 3 OLED Ci7-12700H Laptop(NX.KAVSI.001)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KAVSI.001\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4000000\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 10499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 10499900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"202211222a4d1cbf-9195-4fd9-90e4-ce0458dbef87\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20221122c7693626-b04d-439a-8d61-9001bba9c3a0\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2022112292fbf2ca-e5f7-4639-9791-f328a7001711\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20221122473405b9-bd82-4543-93c1-842bae98bef8\"\n                }\n            ]\n        },\n        {\n            \"id\": \"30204\",\n            \"name\": \"ACER Swift 5 CI7 (Intel) Laptop(NX.A6SSI.001)\",\n            \"description\": \"\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.A6SSI.001\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 6999900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 9999900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 9999900\n            },\n            \"images\": [\n                {\n                    \"screen_type\": \"DETAILICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2020120258cff1eb-579f-43ee-b953-a93fcc02938f\"\n                },\n                {\n                    \"screen_type\": \"HOMEICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"20201202b0fb3e2c-3b27-4da6-b308-afcdf35a7c24\"\n                },\n                {\n                    \"screen_type\": \"LISTICON\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2020120239d61ea0-8ac7-4a8b-b11d-5391949cc305\"\n                },\n                {\n                    \"screen_type\": \"REVIEWORDER\",\n                    \"sequence\": 1,\n                    \"resource_id\": \"2020120228532433-3289-47a3-b8f7-02e428df4b03\"\n                }\n            ]\n        },\n        {\n            \"id\": \"64267\",\n            \"name\": \"ACER Swift Go 14 R5 7530U Laptop(NX.KG3SI.004)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KG3SI.004\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4000000\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5499900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5499900\n            }\n        },\n        {\n            \"id\": \"64268\",\n            \"name\": \"ACER Swift Go 14 R5 7530U Laptop(NX.KG3SI.005)\",\n            \"brand_id\": \"6\",\n            \"brand_name\": \"Acer\",\n            \"category_id\": \"15\",\n            \"category_name\": \"Laptops\",\n            \"sku_code\": \"NX.KG3SI.005\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 4129900\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5899900\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 5899900\n            }\n        },\n        {\n            \"id\": \"64966\",\n            \"name\": \"APPLE CARE 10.2 Cellular 128gb iPad(MW6E2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW6E2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64965\",\n            \"name\": \"APPLE CARE 10.2 Cellular 128gb iPad(MW6F2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW6F2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64964\",\n            \"name\": \"APPLE CARE 10.2 Cellular 128gb iPad(MW6G2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW6G2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64972\",\n            \"name\": \"APPLE CARE 10.2 Cellular 128gb iPad(MYML2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYML2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64971\",\n            \"name\": \"APPLE CARE 10.2 Cellular 128gb iPad(MYMM2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYMM2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64970\",\n            \"name\": \"APPLE CARE 10.2 Cellular 128gb iPad(MYMN2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYMN2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64848\",\n            \"name\": \"APPLE CARE 10.2 Cellular 256gb iPad(MK493HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK493HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64847\",\n            \"name\": \"APPLE CARE 10.2 Cellular 256gb iPad(MK4E3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK4E3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64846\",\n            \"name\": \"APPLE CARE 10.2 Cellular 256gb iPad(MK4H3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK4H3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64969\",\n            \"name\": \"APPLE CARE 10.2 Cellular 32gb iPad(MW6A2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW6A2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64968\",\n            \"name\": \"APPLE CARE 10.2 Cellular 32gb iPad(MW6C2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW6C2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64967\",\n            \"name\": \"APPLE CARE 10.2 Cellular 32gb iPad(MW6D2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW6D2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64975\",\n            \"name\": \"APPLE CARE 10.2 Cellular 32gb iPad(MYMH2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYMH2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64974\",\n            \"name\": \"APPLE CARE 10.2 Cellular 32gb iPad(MYMJ2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYMJ2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64973\",\n            \"name\": \"APPLE CARE 10.2 Cellular 32gb iPad(MYMK2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYMK2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64849\",\n            \"name\": \"APPLE CARE 10.2 Cellular 64gb iPad(MK473HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK473HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64960\",\n            \"name\": \"APPLE CARE 10.2 WiFi 128gb iPad(MW772HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW772HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64959\",\n            \"name\": \"APPLE CARE 10.2 WiFi 128gb iPad(MW782HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW782HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64958\",\n            \"name\": \"APPLE CARE 10.2 WiFi 128gb iPad(MW792HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW792HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64978\",\n            \"name\": \"APPLE CARE 10.2 WiFi 128gb iPad(MYLD2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYLD2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64977\",\n            \"name\": \"APPLE CARE 10.2 WiFi 128gb iPad(MYLE2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYLE2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64976\",\n            \"name\": \"APPLE CARE 10.2 WiFi 128gb iPad(MYLF2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYLF2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64851\",\n            \"name\": \"APPLE CARE 10.2 WiFi 256gb iPad(MK2N3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK2N3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64850\",\n            \"name\": \"APPLE CARE 10.2 WiFi 256gb iPad(MK2P3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK2P3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64963\",\n            \"name\": \"APPLE CARE 10.2 WiFi 32gb iPad(MW742HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW742HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64962\",\n            \"name\": \"APPLE CARE 10.2 WiFi 32gb iPad(MW752HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW752HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64961\",\n            \"name\": \"APPLE CARE 10.2 WiFi 32gb iPad(MW762HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MW762HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64981\",\n            \"name\": \"APPLE CARE 10.2 WiFi 32gb iPad(MYL92HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYL92HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64980\",\n            \"name\": \"APPLE CARE 10.2 WiFi 32gb iPad(MYLA2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYLA2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64979\",\n            \"name\": \"APPLE CARE 10.2 WiFi 32gb iPad(MYLC2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYLC2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64853\",\n            \"name\": \"APPLE CARE 10.2 WiFi 64gb iPad(MK2K3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK2K3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64852\",\n            \"name\": \"APPLE CARE 10.2 WiFi 64gb iPad(MK2L3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MK2L3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 750000\n            }\n        },\n        {\n            \"id\": \"64910\",\n            \"name\": \"APPLE CARE 10.9 Cellular 256gb iPad(MYH22HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH22HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64909\",\n            \"name\": \"APPLE CARE 10.9 Cellular 256gb iPad(MYH42HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH42HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64908\",\n            \"name\": \"APPLE CARE 10.9 Cellular 256gb iPad(MYH52HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH52HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64907\",\n            \"name\": \"APPLE CARE 10.9 Cellular 256gb iPad(MYH62HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH62HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64906\",\n            \"name\": \"APPLE CARE 10.9 Cellular 256gb iPad(MYH72HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH72HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64915\",\n            \"name\": \"APPLE CARE 10.9 Cellular 64gb iPad(MYGW2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYGW2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64914\",\n            \"name\": \"APPLE CARE 10.9 Cellular 64gb iPad(MYGX2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYGX2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64913\",\n            \"name\": \"APPLE CARE 10.9 Cellular 64gb iPad(MYGY2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYGY2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64912\",\n            \"name\": \"APPLE CARE 10.9 Cellular 64gb iPad(MYH02HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH02HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64911\",\n            \"name\": \"APPLE CARE 10.9 Cellular 64gb iPad(MYH12HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYH12HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64920\",\n            \"name\": \"APPLE CARE 10.9 WiFi 256gb iPad(MYFT2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFT2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64919\",\n            \"name\": \"APPLE CARE 10.9 WiFi 256gb iPad(MYFW2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFW2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64918\",\n            \"name\": \"APPLE CARE 10.9 WiFi 256gb iPad(MYFX2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFX2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64917\",\n            \"name\": \"APPLE CARE 10.9 WiFi 256gb iPad(MYFY2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFY2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64916\",\n            \"name\": \"APPLE CARE 10.9 WiFi 256gb iPad(MYG02HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYG02HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64925\",\n            \"name\": \"APPLE CARE 10.9 WiFi 64gb iPad(MYFM2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFM2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64924\",\n            \"name\": \"APPLE CARE 10.9 WiFi 64gb iPad(MYFN2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFN2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64923\",\n            \"name\": \"APPLE CARE 10.9 WiFi 64gb iPad(MYFP2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFP2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64922\",\n            \"name\": \"APPLE CARE 10.9 WiFi 64gb iPad(MYFQ2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFQ2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64921\",\n            \"name\": \"APPLE CARE 10.9 WiFi 64gb iPad(MYFR2HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MYFR2HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64817\",\n            \"name\": \"APPLE CARE 10.9 Wifi 256gb iPad Air(MM9L3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9L3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64816\",\n            \"name\": \"APPLE CARE 10.9 Wifi 256gb iPad Air(MM9M3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9M3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64815\",\n            \"name\": \"APPLE CARE 10.9 Wifi 256gb iPad Air(MM9N3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9N3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64814\",\n            \"name\": \"APPLE CARE 10.9 Wifi 256gb iPad Air(MM9P3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9P3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64812\",\n            \"name\": \"APPLE CARE 10.9 Wifi 256gb iPad Air(MME63HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MME63HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64821\",\n            \"name\": \"APPLE CARE 10.9 Wifi 64gb iPad Air(MM9C3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9C3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64820\",\n            \"name\": \"APPLE CARE 10.9 Wifi 64gb iPad Air(MM9D3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9D3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64819\",\n            \"name\": \"APPLE CARE 10.9 Wifi 64gb iPad Air(MM9E3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9E3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64818\",\n            \"name\": \"APPLE CARE 10.9 Wifi 64gb iPad Air(MM9F3HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM9F3HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64813\",\n            \"name\": \"APPLE CARE 10.9 Wifi 64gb iPad Air(MME23HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MME23HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64825\",\n            \"name\": \"APPLE CARE 10.9 Wifi Cellular 256gb iPad Air(MM713HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM713HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        },\n        {\n            \"id\": \"64824\",\n            \"name\": \"APPLE CARE 10.9 Wifi Cellular 256gb iPad Air(MM723HN/A)\",\n            \"brand_id\": \"298\",\n            \"brand_name\": \"Apple Care\",\n            \"category_id\": \"3\",\n            \"category_name\": \"Tablets\",\n            \"sku_code\": \"MM723HN/A\",\n            \"min_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 100\n            },\n            \"max_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            },\n            \"indicative_price\": {\n                \"currency_code\": \"INR\",\n                \"amount\": 950000\n            }\n        }\n    ],\n    \"links\": [\n        {\n            \"href\": \"/v1/catalogue/products?page_size=100&page=1\",\n            \"rel\": \"SELF\",\n            \"method\": \"GET\"\n        }\n    ]\n}"
+				}
+			]
+		},
+		{
+			"name": "Product by ID",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/v1/catalogue/products/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"products",
+						"1"
+					],
+					"query": [
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%221%22%2C%20%22type%22%3A%20%22POS_LANDI%22%7D",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%22138492%22%2C%20%22type%22%3A%20%22POS_TAB%22%7D",
+							"disabled": true
+						},
+						{
+							"key": "client",
+							"value": "%7B%22id%22%3A%20%222%22%2C%20%22type%22%3A%20%22STORE%22%7D",
+							"disabled": true
+						},
+						{
+							"key": "fields",
+							"value": "metadata",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EmiCalculator",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-feature-flags",
+						"value": "ENABLE_NBFC",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"product_details\": [\n        {\n            \"product_id\": \"327\",\n            \"amount\": {\n                \"currency_code\": \"INR\",\n                \"amount\": \"4900000\"\n            }\n        }\n    ],\n    \"client\": {\n        \"id\": \"138492\",\n        \"type\": \"POS_LANDI\"\n    }\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/catalogue/calculate-emi",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"calculate-emi"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GenerateEmiOptions",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-feature-flags",
+						"value": "ENABLE_NBFC",
+						"type": "default",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"product_ids\": [ \"327\" ],\n  \"client\": {\n    \"id\": \"138492\",\n    \"type\": \"POS_LANDI\"\n  }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/catalogue/generate-emi-options",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"generate-emi-options"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "ProductMetadataSearch",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer {{access-token}}",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"client\": {\n        \"id\": \"138492\",\n        \"type\": \"POS_LANDI\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/v1/catalogue/products/metadata",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"v1",
+						"catalogue",
+						"products",
+						"metadata"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
