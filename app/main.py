@@ -3,6 +3,7 @@ from datetime import datetime
 
 from app.services.product_service import ProductService
 from app.utils.excel_writer import ExcelWriter
+from prometheus_client import start_http_server
 
 today = datetime.now().strftime("%d-%m-%Y")
 
@@ -12,6 +13,11 @@ output_folder.mkdir(
     parents=True,
     exist_ok=True
 )
+
+start_http_server(8000)
+
+service = ProductService()
+records = service.run()
 
 file_path = (
     output_folder /
