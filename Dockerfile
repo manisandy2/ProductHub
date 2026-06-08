@@ -10,4 +10,6 @@ COPY . .
 
 RUN mkdir -p output logs
 
+ENV PYTHONPATH=/app
+
 CMD ["python", "-m", "app.main"]

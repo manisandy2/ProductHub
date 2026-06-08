@@ -1,18 +1,48 @@
-version: "3.9"
-
 services:
-
   producthub:
 
-    build: .
+    build:
+      context: . 
+      dockerfile: Dockerfile
 
     container_name: producthub
 
     env_file:
-      - .env
+      - .env 
+      - .env.header 
+      - .env.token
 
     volumes:
       - ./output:/app/output
       - ./logs:/app/logs
+    
+    ports:
+      - "8000:8000"
 
-    restart: unless-stopped
+
+    restart: "no"
+    
+  prometheus:
+    image: prom/prometheus
+
+    container_name: prometheus
+
+    ports:
+      - "9090:9090"
+
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana
+
+    container_name: grafana
+
+    ports:
+      - "3000:3000"
+
+    volumes:
+      - grafana-storage:/var/lib/grafana
+
+volumes:
+  grafana-storage:
