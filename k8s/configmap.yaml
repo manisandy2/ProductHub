@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: producthub-config
+  namespace: producthub
+
+data:
+  BASE_URL: "https://api.pinelabs.com"
+  PRODUCT_URL: "/v1/catalogue/products?page_size=100&page="

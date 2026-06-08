@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: producthub
+  namespace: producthub
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      app: producthub
+
+  template:
+    metadata:
+      labels:
+        app: producthub
+
+    spec:
+      containers:
+
+      - name: producthub
+
+        image: producthub:1.0
+
+        imagePullPolicy: Never
+
+        ports:
+        - containerPort: 8000
+
+        envFrom:
+        - configMapRef:
+            name: producthub-config
+
+        - secretRef:
+            name: producthub-secret
